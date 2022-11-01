@@ -2,8 +2,8 @@ from django.db import models
 
 
 class Category(models.Model):
-    """Перечень возможных категорий произведений."""
-    title = models.CharField(
+    """Перечень возможных типов произведений."""
+    name = models.CharField(
         max_length=200,
         verbose_name='Название'
     )
@@ -18,12 +18,12 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ['title']
+        ordering = ['name']
 
 
 class Genre(models.Model):
     """Перечень жанров произведений."""
-    title = models.CharField(
+    name = models.CharField(
         max_length=200,
         verbose_name='Название'
     )
@@ -38,12 +38,12 @@ class Genre(models.Model):
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        ordering = ['title']
+        ordering = ['name']
 
 
 class Title(models.Model):
     """Произведения."""
-    title = models.TextField(
+    name = models.TextField(
         verbose_name='Название произведения',
         max_length=200)
     description = models.TextField(
@@ -70,7 +70,7 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-        ordering = ['title']
+        ordering = ['name']
 
 
 class GenreTitle(models.Model):
