@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from reviews.models import Category, Genre, Title
 import datetime as dt
-from rest_framework.validators import UniqueTogetherValidator
+# from rest_framework.validators import UniqueTogetherValidator
 
 
 class TitleSerialiser(serializers.ModelSerializer):
@@ -16,12 +16,12 @@ class TitleSerialiser(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
 
-    validators = [
-        UniqueTogetherValidator(
-            queryset=Title.objects.all(),
-            fields=('name', 'year')
-        )
-    ]
+    # validators = [
+    #     UniqueTogetherValidator(
+    #         queryset=Title.objects.all(),
+    #         fields=('name', 'year')
+    #     )
+    # ]
 
     def validate_year(self, value):
         year = dt.date.today().year

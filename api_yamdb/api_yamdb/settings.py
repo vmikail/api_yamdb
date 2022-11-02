@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta
+# from datetime import timedelta
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'reviews',
     # 'users',
     'rest_framework',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +41,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'api_yamdb.urls'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
