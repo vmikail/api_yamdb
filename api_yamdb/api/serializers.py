@@ -14,7 +14,7 @@ class TitleSerialiser(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = ('name', 'description', 'year', 'category', 'genre')
 
     validators = [
         UniqueTogetherValidator(

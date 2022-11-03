@@ -5,6 +5,7 @@ from reviews.models import Category, Genre, Title
 from .serializers import TitleSerialiser
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from .filters import TitleFilter
 
 
 class TitleViewset(viewsets.ModelViewSet):
@@ -12,7 +13,7 @@ class TitleViewset(viewsets.ModelViewSet):
     serializer_class = TitleSerialiser
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('genre__name', 'category__slug')
+    filterset_class = TitleFilter
 
 
 class CategoryViewset(viewsets.ModelViewSet):

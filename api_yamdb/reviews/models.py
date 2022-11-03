@@ -45,7 +45,8 @@ class Title(models.Model):
     """Произведения."""
     name = models.TextField(
         verbose_name='Название произведения',
-        max_length=200)
+        max_length=200
+    )
     description = models.TextField(
         blank=True,
         null=True,
@@ -70,7 +71,7 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-        # ordering = ['name']
+        ordering = ['name']
 
 
 class GenreTitle(models.Model):
