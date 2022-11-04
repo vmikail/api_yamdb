@@ -2,6 +2,21 @@ from rest_framework import serializers
 from reviews.models import Category, Genre, Title
 import datetime as dt
 from rest_framework.validators import UniqueTogetherValidator
+# from django.db.models import Avg
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = '__all__'
+        lookup_field = 'slug'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        lookup_field = 'slug'
 
 
 class TitleSerialiser(serializers.ModelSerializer):
@@ -29,16 +44,14 @@ class TitleSerialiser(serializers.ModelSerializer):
             raise serializers.ValidationError('Проверьте год создания')
         return value
 
+    class TitleShowSerializer(serializers.ModelSerializer):
+        rating = serializers.IntegerField(
+            source='reviews__score__avg', read_only=True)
+        category = CategorySerializer()
+        genre = GenreSerializer(many=True)
 
-class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Genre
-        fields = '__all__'
-        lookup_field = 'slug'
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
-        lookup_field = 'slug'
+        model = Title
+        fields = (
+            'name', 'year', 'rating', 'description', 'genre', 'category'
+        )
