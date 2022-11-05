@@ -15,8 +15,8 @@ def run():
             title, _ = Title.objects.get_or_create(id=row[1])
             genre, _ = Genre.objects.get_or_create(id=row[2])
 
-            print(f'print1={title}')
-            print(f'print2={genre}')
+            # print(f'print1={title}')
+            # print(f'print2={genre}')
 
             genre_title = GenreTitle(
                 id=row[0],

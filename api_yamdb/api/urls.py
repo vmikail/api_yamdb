@@ -6,7 +6,7 @@ router = DefaultRouter()
 
 router.register(r'categories', CategoryViewset)
 router.register(r'genres', GenreViewset)
-router.register(r'titles', TitleViewset)
+router.register(r'titles', TitleViewset, basename='titles')
 # router.register(r'reviews', ReviewViewSet, basename='review')
 # router.register(r'comments', CommentViewSet, basename='comment')
 

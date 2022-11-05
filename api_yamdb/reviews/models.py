@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 
 
 class Category(models.Model):
@@ -107,8 +108,8 @@ class Reviews(models.Model):
         blank=True, null=True,
         verbose_name='Текст отзыва'
     )
-    # author = models.ForeignKey(
-    #    User, on_delete=models.CASCADE, related_name='reviews')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reviews')
     score = models.IntegerField(verbose_name='Оценка')
     pub_date = models.DateTimeField('Дата отзыва', auto_now_add=True)
 
@@ -122,6 +123,6 @@ class Comments(models.Model):
         verbose_name='Отзыв'
     )
     text = models.TextField(verbose_name='Текст комментария')
-    # author = models.ForeignKey(
-    #    User, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='comments')
     pub_date = models.DateTimeField('Дата комментария', auto_now_add=True)

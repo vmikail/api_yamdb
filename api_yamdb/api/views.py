@@ -2,18 +2,29 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
 from .serializers import CategorySerializer, GenreSerializer
 from reviews.models import Category, Genre, Title
-from .serializers import TitleSerialiser
+from .serializers import TitleSerializer, TitleShowSerializer
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import TitleFilter
+from django.db.models import Avg
 
 
 class TitleViewset(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
-    serializer_class = TitleSerialiser
+    queryset = Title.objects.annotate(
+        Avg("reviews__score")
+    )
+    serializer_class = TitleShowSerializer
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.action in ('retrieve', 'list'):
+            return TitleShowSerializer
+        return TitleSerializer
+
+    # def get_queryset(self):
+    #     return Title.objects.all().annotate(arating=Avg('reviews__score'))
 
 
 class CategoryViewset(viewsets.ModelViewSet):
