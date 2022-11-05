@@ -1,7 +1,9 @@
-from rest_framework import serializers
-from reviews.models import Category, Genre, Title
 import datetime as dt
+
+from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from reviews.models import Category, Comments, Genre, Reviews, Title
+
 # from django.db.models import Avg
 
 
@@ -58,3 +60,17 @@ class TitleShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = '__all__'
+
+
+class ReviewsSerializer(serializers.ModelSerializer):
+    score = serializers.IntegerField(choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    
+    class Meta:
+        model = Reviews
+        fields = ('title', 'text', 'score')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comments
+        fields = ('review', 'text')
