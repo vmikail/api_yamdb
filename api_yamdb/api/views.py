@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework import mixins, viewsets, status, views
+from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 
-
-from .serializers import SignUpSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
+from .permissions import IsAdministrator
+from .serializers import SignUpSerializer, UserSerializer
 
 from users.models import User
 
@@ -51,3 +52,31 @@ class GetTokenView(views.APIView):
             return Response({"token": str(token)}, status=status.HTTP_200_OK)
         return Response({"field_name": ['confirmation_code']},
                         status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'username'
+    permission_classes = (IsAdministrator,)
+
+    @action(
+        methods=['GET', 'PATCH'],
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+        url_path='me')
+    def get_current_user_info(self, request):
+        serializer = UserSerializer(request.user)
+        if 'role' in request.data:
+            return Response(
+                serializer.data,
+                status=status.HTTP_400_BAD_REQUEST)
+        if request.method == 'PATCH':
+            serializer = UserSerializer(
+                request.user,
+                data=request.data,
+                partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        Response(serializer.data)
