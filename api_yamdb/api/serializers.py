@@ -63,7 +63,7 @@ class TitleShowSerializer(serializers.ModelSerializer):
 
 
 class ReviewsSerializer(serializers.ModelSerializer):
-    score = serializers.IntegerField(choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    score = serializers.ChoiceField(choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     
     class Meta:
         model = Reviews
