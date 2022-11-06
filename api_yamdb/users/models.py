@@ -13,10 +13,7 @@ ROLES = (
 
 
 class User(AbstractUser):
-    username = models.CharField(max_length=150, unique=True)
-    email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    email = models.EmailField('Электронная почта', unique=True)
     role = models.CharField('Роль пользователя',
                             max_length=10,
                             choices=ROLES,
@@ -24,6 +21,11 @@ class User(AbstractUser):
     bio = models.TextField('Биография',
                            blank=True,
                            null=True)
+    password = models.CharField('Пароль',
+                                max_length=128,
+                                blank=True,
+                                null=True,
+                                default='')
 
     @property
     def is_user(self):
