@@ -1,5 +1,5 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 USER = 'user'
 ADMIN = 'admin'
@@ -41,3 +41,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    class Meta:
+        ordering = ['username', ]
