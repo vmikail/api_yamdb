@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Comments, Genre, Review, Title
 from users.models import User
 
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from .filters import TitleFilter
 from .permissions import (IsAdministrator, IsAdminOrReadOnly,
                           IsOwnerOrReadOnlyFull, IsReadOnly)
@@ -36,22 +37,23 @@ class SignUpViewSet(mixins.CreateModelMixin,
     lookup_field = 'username'
 
     def create(self, request, *args, **kwargs):
-        data = request.data
-        serializer = self.get_serializer(data=data)
-        username = data.get('username')
+        serializer = SignUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data.get('username')
+        email = serializer.validated_data.get('email')
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        user = User.objects.get(username=username)
+        user = User.objects.get(username=username, email=email)
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
             subject='Код подтрвеждения',
             message=f'Код подтверждения {confirmation_code} '
                     f'для пользователя {user.username}',
-            from_email='admin@yamdb.ru',
+            from_email=DEFAULT_FROM_EMAIL,
             recipient_list=[f'{user.email}'],
             fail_silently=False
         )
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class GetTokenView(views.APIView):
@@ -65,8 +67,8 @@ class GetTokenView(views.APIView):
         confirmation_code = request.data.get('confirmation_code', [])
         if default_token_generator.check_token(user, confirmation_code):
             token = RefreshToken.for_user(user).access_token
-            return Response({"token": str(token)}, status=status.HTTP_200_OK)
-        return Response({"field_name": ['confirmation_code']},
+            return Response({'token': str(token)}, status=status.HTTP_200_OK)
+        return Response({'field_name': ['confirmation_code']},
                         status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -83,7 +85,7 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
         url_path='me')
     def get_current_user_info(self, request):
-        serializer = UserSerializer(request.user)
+        serializer = self.get_serializer(request.user)
         if 'role' in request.data:
             return Response(
                 serializer.data,
@@ -100,7 +102,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewset(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(Avg("review__score")).order_by('name')
+    queryset = Title.objects.annotate(Avg('review__score')).order_by('name')
     serializer_class = TitleShowSerializer
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
