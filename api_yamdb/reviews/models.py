@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from .validators import validate_year
 from users.models import User
 
 
@@ -15,13 +15,14 @@ class Category(models.Model):
         verbose_name='Обозначение'
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
 
 
 class Genre(models.Model):
@@ -35,13 +36,13 @@ class Genre(models.Model):
         verbose_name='Обозначение'
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
@@ -68,17 +69,15 @@ class Title(models.Model):
         verbose_name='Жанр',
     )
     year = models.IntegerField(
-        verbose_name='Год выхода'
+        verbose_name='Год выхода',
+        validators=[validate_year],
+        db_index=True
     )
-    rating = models.IntegerField(
-        verbose_name='Рейтинг',
-        null=True,
-        default=None
-    )
-
+    
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -134,12 +133,6 @@ class Review(models.Model):
 
 class Comments(models.Model):
     """Комментарии к отзывам."""
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name="comments",
-        verbose_name='Произведение'
-    )
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,

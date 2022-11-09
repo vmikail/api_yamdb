@@ -1,15 +1,21 @@
 import datetime as dt
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+
 
 from reviews.models import Category, Comments, Genre, Review, Title
 from users.models import User
 
 
 class SignUpSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        validators=[UniqueValidator(
+            queryset=User.objects.all())]
+    )
+
     def validate_username(self, value):
-        if value == 'me':
+        if value.lower() == 'me':
             raise serializers.ValidationError('Выбрано недопустимое имя.')
         return value
 
@@ -51,6 +57,7 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = '__all__'
+        read_only_fields = ['rating']
 
     validators = [
         UniqueTogetherValidator(
@@ -58,12 +65,6 @@ class TitleSerializer(serializers.ModelSerializer):
             fields=('name', 'year')
         )
     ]
-
-    def validate_year(self, value):
-        year = dt.date.today().year
-        if year < value:
-            raise serializers.ValidationError('Проверьте год создания')
-        return value
 
 
 class TitleShowSerializer(serializers.ModelSerializer):
