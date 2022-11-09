@@ -24,7 +24,6 @@ class Category(models.Model):
         return self.name
 
 
-
 class Genre(models.Model):
     """Перечень жанров произведений."""
     name = models.CharField(
@@ -74,6 +73,7 @@ class Title(models.Model):
         db_index=True
     )
     
+
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'

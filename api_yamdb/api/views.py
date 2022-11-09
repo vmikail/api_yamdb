@@ -10,12 +10,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Category, Comments, Genre, Review, Title
+from reviews.models import Category, Genre, Review, Title
 from users.models import User
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from .filters import TitleFilter
 from .permissions import (IsAdministrator, IsAdminOrReadOnly,
-                          IsOwnerOrReadOnlyFull, IsReadOnly)
+                          IsOwnerOrReadOnlyFull)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignUpSerializer,
                           TitleSerializer, TitleShowSerializer, UserSerializer)
@@ -148,7 +148,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
         title_id = self.kwargs.get('title')
         title = get_object_or_404(Title, id=title_id)
         serializer.save(title=title, author=self.request.user)
-
 
 
 class CommentViewSet(viewsets.ModelViewSet):
