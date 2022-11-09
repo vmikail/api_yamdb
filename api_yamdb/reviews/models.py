@@ -72,7 +72,6 @@ class Title(models.Model):
         validators=[validate_year],
         db_index=True
     )
-    
 
     class Meta:
         verbose_name = 'Произведение'
