@@ -15,7 +15,7 @@ from users.models import User
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from .filters import TitleFilter
 from .permissions import (IsAdministrator, IsAdminOrReadOnly,
-                          IsOwnerOrReadOnlyFull)
+                          IsOwnerOrReadOnlyFull, IsReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignUpSerializer,
                           TitleSerializer, TitleShowSerializer, UserSerializer)
@@ -96,7 +96,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 data=request.data,
                 partial=True)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            serializer.save(role=request.user.role)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.data)
 
@@ -121,7 +121,7 @@ class CategoryViewset(ListCreateDestroyViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = [IsAdministrator | IsReadOnly]
 
 
 class GenreViewset(ListCreateDestroyViewSet):
@@ -130,7 +130,7 @@ class GenreViewset(ListCreateDestroyViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = [IsAdministrator | IsReadOnly]
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -166,15 +166,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         review_id = self.kwargs.get('review')
         review = get_object_or_404(Review, id=review_id, title=title_id)
         serializer.save(author=self.request.user, review=review)
-
-    # def get_queryset(self):
-    #     title_ = self.kwargs.get('title')
-    #     review = self.kwargs.get('review')
-    #     return Comments.objects.filter(review=review, title=title)
-
-    # def perform_create(self, serializer):
-    #     title = get_object_or_404(Title, pk=self.kwargs.get('title'))
-    #     review = get_object_or_404(Review, pk=self.kwargs.get('review'))
-    #     serializer.save(
-    #         title=title, review=review, author=self.request.user
-    #     )
