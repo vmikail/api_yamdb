@@ -86,10 +86,12 @@ class UserViewSet(viewsets.ModelViewSet):
         url_path='me')
     def get_current_user_info(self, request):
         serializer = self.get_serializer(request.user)
+        '''
         if 'role' in request.data:
             return Response(
                 serializer.data,
                 status=status.HTTP_400_BAD_REQUEST)
+        '''
         if request.method == 'PATCH':
             serializer = UserSerializer(
                 request.user,
